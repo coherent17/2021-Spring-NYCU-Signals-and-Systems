@@ -10,15 +10,16 @@ t = linspace(initial_time, final_time, N);
 x = rectangular_pulse(t);
 noise = generate_noise(t);
 
-%calculate the mean and std for the noise when t > 0
-mean_noise = mean(noise(500:1500));
-std_noise = std(noise(500:1500));
+%calculate the mean and std for the noise, 
+% just to make sure than randn work
+mean_noise = mean(noise);
+std_noise = std(noise);
 
 %superposition the pulse with the noise
 y = x + noise;
 
 %calculate the SNR
-SNR = calculate_SNR(y,noise);
+SNR = calculate_SNR(y);
 fprintf('SNR of y(t) = %.2f\n', SNR);
 
 %(a) rectangular pulse and (b)noise-corrupted result
@@ -32,7 +33,7 @@ xlabel('time(sec)', FontSize= 20);
 ylabel('Magnitude', FontSize=  20);
 title('Plot x(t) and y(t)', FontSize= 24);
 legend('x(t)', 'y(t) = x(t) + noise', Fontsize = 16);
-text(4.5,8,['SNR of y(t) = ', num2str(SNR),'dB'], 'FontSize' ,24, 'Color' , 'blue');
+text(4.5,8,['SNR of y(t) = ', num2str(SNR),' dB'], 'FontSize' ,24, 'Color' , 'blue');
 grid on;
 
 function x = rectangular_pulse(t)
@@ -52,9 +53,9 @@ function noise = generate_noise(t)
     noise = randn(sz);
 end
 
-function SNR = calculate_SNR(y,noise)
-    peak_signal = max(y);
-    std_noise = std(noise(500:1500)); %only calculate when t > 0
-    SNR = 20 * log(peak_signal / std_noise);
+function SNR = calculate_SNR(y)
+    peak_signal = 10; %using 10 instead of max(y) ...by professor
+    std_noise = std(y(1:500));
+    SNR = 20 * log10(peak_signal / std_noise);
 end
 
